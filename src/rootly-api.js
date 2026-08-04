@@ -1,3 +1,5 @@
+import { trackingHeaders } from './user-agent.js';
+
 const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
 
 export class RootlyApiClient {
@@ -10,6 +12,7 @@ export class RootlyApiClient {
     const response = await fetch(new URL(path, this.baseUrl), {
       method: options.method || 'GET',
       headers: {
+        ...trackingHeaders,
         Authorization: `Bearer ${this.token}`,
         Accept: 'application/vnd.api+json',
         ...(options.body ? { 'Content-Type': 'application/vnd.api+json' } : {}),
