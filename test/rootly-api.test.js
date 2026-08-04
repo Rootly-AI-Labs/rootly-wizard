@@ -40,6 +40,18 @@ test('request sends a bearer auth header', async () => {
   });
 });
 
+test('request tags itself with wizard User-Agent + client headers so the API can track it', async () => {
+  let seenHeaders;
+  await withFetch(async (_url, init) => {
+    seenHeaders = init.headers;
+    return jsonResponse({ data: [] });
+  }, async () => {
+    await new RootlyApiClient('tok').listTeams();
+    assert.match(seenHeaders['User-Agent'], /^rootly-wizard\/\d+\.\d+\.\d+/);
+    assert.match(seenHeaders['X-Rootly-Client'], /^rootly-wizard\/\d+\.\d+\.\d+$/);
+  });
+});
+
 test('findUserByEmail follows pagination links until it finds a match', async () => {
   const calls = [];
   await withFetch(async (url) => {

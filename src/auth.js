@@ -5,6 +5,7 @@ import { spawn } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { trackingHeaders } from './user-agent.js';
 
 const SERVICE_NAME = 'rootly-wizard';
 const API_TOKEN_ACCOUNT = 'rootly-token';
@@ -184,6 +185,7 @@ async function registerOAuthClient(baseUrl = DEFAULT_API_BASE_URL) {
   const response = await fetch(new URL('/oauth/register', authBaseUrl(baseUrl)), {
     method: 'POST',
     headers: {
+      ...trackingHeaders,
       'Content-Type': 'application/json',
       Accept: 'application/json'
     },
@@ -241,6 +243,7 @@ async function exchangeOAuthCode({ code, codeVerifier, clientId, baseUrl = DEFAU
   const response = await fetch(new URL('/oauth/token', authBaseUrl(baseUrl)), {
     method: 'POST',
     headers: {
+      ...trackingHeaders,
       'Content-Type': 'application/x-www-form-urlencoded',
       Accept: 'application/json'
     },
@@ -266,6 +269,7 @@ async function refreshOAuthAccessToken(session) {
   const response = await fetch(new URL('/oauth/token', authBaseUrl(session.baseUrl || DEFAULT_API_BASE_URL)), {
     method: 'POST',
     headers: {
+      ...trackingHeaders,
       'Content-Type': 'application/x-www-form-urlencoded',
       Accept: 'application/json'
     },
@@ -389,6 +393,7 @@ export async function deleteToken() {
 export async function validateToken(token, baseUrl = DEFAULT_API_BASE_URL) {
   const response = await fetch(new URL('/v1/users/me', baseUrl), {
     headers: {
+      ...trackingHeaders,
       Authorization: `Bearer ${token}`,
       Accept: 'application/json'
     },
